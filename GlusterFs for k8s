@@ -1,0 +1,277 @@
+GlusterFS server setup on all Nodes
+ 
+#apt-get install software-properties-common
+#add-apt-repository ppa:gluster/glusterfs-6
+#apt-get install glusterfs-server
+#apt-mark hold glusterfs*
+#apt-get -y install thin-provisioning-tools
+#systemctl enable glusterfs-server
+#systemctl status glusterfs-server
+ 
+Note: Edit the file /etc/init.d/glusterfs-server on all node, changed the line # Provides: glusterfs-server to # Provides: glusterd
+ 
+#systemctl daemon-reload
+ 
+######Setup Heketi for Kubernetes shared block storage with external GlusterFS backend
+ 
+Install Heketi on one of all GlusterFS nodes
+ 
+#wget https://github.com/heketi/heketi/releases/download/v8.0.0/heketi-v8.0.0.linux.amd64.tar.gz
+ 
+#tar -xzvf heketi-v8.0.0.linux.amd64.tar.gz
+#cd heketi;cp heketi heketi-cli /usr/local/bin/
+#heketi -v
+#groupadd -r -g 515 heketi
+ 
+#useradd -r -c "Heketi user" -d /var/lib/heketi -s /bin/false -m -u 515 -g heketi heketi
+#mkdir -p /var/lib/heketi && chown -R heketi:heketi /var/lib/heketi
+#mkdir -p /var/log/heketi && chown -R heketi:heketi /var/log/heketi
+#mkdir -p /etc/heketi
+#cd /etc/heketi/
+#ssh-keygen -f /etc/heketi/heketi_key -t rsa -N ''
+#chown heketi:heketi /etc/heketi/heketi_key*
+#cat heketi_key.pub
+copy pub key to /root/.ssh/authorized file on all nodes & enable direct root login.
+#vi /root/.ssh/authorized_keys
+#vi /etc/ssh/sshd_config
+Match User root
+PermitRootLogin yes
+/etc/init.d/ssh restart
+ 
+#####add all nodes hostname & ip-addr in /etc/hosts file on all node & try to ssh via heketi key
+ 
+#ssh -i heketi_key root@192.168.60.7
+ 
+#cp /root/heketi/heketi.json /etc/heketi/heketi.json
+#####Edit /etc/heketi/heketi.json file
+ 
+"executor": "ssh",
+ 
+    "_sshexec_comment": "SSH username and private key file information",
+    "sshexec": {
+      "keyfile": "/etc/heketi/heketi_key",
+      "user": "root",
+      "port": "22",
+      "fstab": "/etc/fstab",
+      "backup_lvm_metadata": false
+    },
+ 
+ 
+Note: The important part is the ssh provisioner where we setup the ssh key we created before
+ 
+###created the following Heketi service file on all node  /etc/systemd/system/
+heketi.service
+ 
+#
+vi /etc/systemd/system/heketi.service
+ 
+[Unit]
+Description=Heketi Server
+Requires=network-online.target
+After=network-online.target
+[Service]
+Type=simple
+User=heketi
+Group=heketi
+PermissionsStartOnly=true
+PIDFile=/run/heketi/heketi.pid
+Restart=on-failure
+RestartSec=10
+WorkingDirectory=/var/lib/heketi
+RuntimeDirectory=heketi
+RuntimeDirectoryMode=0755
+ExecStartPre=[ -f "/run/heketi/heketi.pid" ] && /bin/rm -f /run/heketi/heketi.pid
+ExecStart=/usr/local/bin/heketi --config=/etc/heketi/heketi.json
+ExecReload=/bin/kill -s HUP $MAINPID
+KillSignal=SIGINT
+TimeoutStopSec=5
+[Install]
+WantedBy=multi-user.target
+ 
+ 
+--------------------------------
+ 
+#chmod +x /etc/systemd/system/heketi.service
+#systemctl daemon-reload
+#systemctl start heketi.service
+#systemctl status heketi.service
+#netstat -tuplen | grep LISTEN | grep heketi
+#systemctl enable heketi
+ 
+####Test the service from the local node & remote node
+ 
+#curl http://192.168.60.6:8080/hello
+Hello from Heketi
+ 
+###Also check that the authentication is working too:
+ 
+#heketi-cli --server http://192.168.60.6:8080 --user admin --secret "PASSWORD" cluster list
+Clusters:
+ 
+Heketi Topology:
+ 
+####Now we need to tell Heketi about the topology of our GlusterFS cluster whcih consists of the following 2 hosts:
+ 
+#vi /etc/heketi/topology.json
+{
+  "clusters": [
+    {
+      "nodes": [
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+                "192.168.60.6"
+              ],
+              "storage": [
+                "192.168.60.6"
+              ]
+            },
+            "zone": 1
+          },
+          "devices": [
+            "/dev/vdc",
+            "/dev/vdd"
+          ]
+        },
+        {
+          "node": {
+            "hostnames": {
+              "manage": [
+                "192.168.60.7"
+              ],
+              "storage": [
+                "192.168.60.7"
+              ]
+            },
+            "zone": 2
+          },
+          "devices": [
+            "/dev/vdc",
+            "/dev/vdd"
+          ]
+        }
+      ]
+    }
+  ]
+}
+ 
+ 
+#chmod +x /etc/heketi/topology.json
+#export HEKETI_CLI_SERVER=http://192.168.60.6:8080;export HEKETI_CLI_USER=admin;export HEKETI_CLI_KEY=PASSWORD
+ 
+#heketi-cli topology load --json=/etc/heketi/topology.json
+#heketi-cli cluster list
+#heketi-cli node list
+#heketi-cli node info
+#heketi-cli node info 723841df9d4f29bf58685f9307c0b3eb
+ 
+#######creation of volumes size of 5 GB using heketi-cli tool
+ 
+#heketi-cli volume create --size 5 --replica 2
+#gluster volume list
+#gluster volume info 9303149034800e2d5b70af0fd3b4037e
+ 
+ 
+Kubernetes Dynamic Provisioner
+ 
+Now that we have Heketi setup and working we can move to k8s integration. The glusterfs-client package needs to be installed on all k8s nodes otherwise the mounting of the GlusterFS volumes will fail
+ 
+#
+#apt-get install software-properties-common
+#add-apt-repository ppa:gluster/glusterfs-6
+#apt-get install glusterfs-client
+ 
+ 
+Kuberentes has built-in plugin for GlusterFS. We need to create a new glusterfs storage class that will use our Heketi service but first we create a Secret for the admin user password in the following gluster-secret.yml file
+ 
+#vi gluster-secret.yml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: heketi-secret
+  namespace: default
+type: "kubernetes.io/glusterfs"
+data:
+  # echo -n "PASSWORD" | base64
+  key: PASSWORD_BASE64_ENCODED
+ 
+  #####the StorageClass YAML file
+ 
+#vi glusterfs-pvc-storageclass.yml
+ 
+kind: StorageClass
+apiVersion: storage.k8s.io/v1beta1
+metadata:
+  name: gluster-heketi-external
+provisioner: kubernetes.io/glusterfs
+parameters:
+  resturl: "http://192.168.60.6:8080"
+  restuser: "admin"
+  secretName: "heketi-secret"
+  secretNamespace: "ent-preprod"
+  volumetype: "replicate:2"
+ 
+ 
+     #kubectl create -f gluster-secret.yml
+     #kubectl create -f gluster-heketi-external-storage-class.yml
+ 
+ 
+     #######To test it we create a PVC (Persistent Volume Claim) that should dynamically provision a 2GB volume for us in the Gluster storage
+ 
+ 
+     #vi glusterfs-pvc-storageclass.yml
+ 
+     apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+name: gluster-dyn-pvc
+annotations:
+   volume.beta.kubernetes.io/storage-class: gluster-heketi-external
+spec:
+accessModes:
+  - ReadWriteMany
+resources:
+   requests:
+     storage: 2Gi
+ 
+####Create a POD to use pvc & pod should be running.
+ 
+apiVersion: v1
+kind: Pod
+metadata:
+  name: task-pv-pod
+spec:
+  volumes:
+    - name: task-pv-storage
+      persistentVolumeClaim:
+        claimName: gluster-dyn-pvc
+  containers:
+    - name: task-pv-container
+      image: nginx
+      ports:
+        - containerPort: 80
+          name: "http-server"
+      volumeMounts:
+        - mountPath: "/usr/share/nginx/html"
+          name: task-pv-storage
+ 
+ 
+Reference: https://icicimov.github.io/blog/virtualization/Kubernetes-shared-storage-with-external-GlusterFS-backend/
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
