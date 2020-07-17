@@ -1,0 +1,39 @@
+Let’s talk about ETCD’s role in kubernetes.
+The ETCD datastore stores information about the components of the cluster such as:
+Nodes
+Pods
+Configs
+Secrets
+Accounts
+Roles
+Bindings
+All information that is displayed when the “kubectl get” command is run, comes from the ETCD server. Every change you make to your cluster, such as adding additional nodes, deploying pods or replica-sets are updated in the ETCD server. Only when the information is updated in the ETCD server, is the change considered to be complete.
+Depending on how you setup your cluster, ETCD is deployed differently. Throughout this section we discuss about two types of kubernetes deployments.
+One deployed from scratch
+Second deployed using the kubeadm tool.
+It’s good to know the difference between the two methods.
+If you set up your cluster from scratch, then you deploy ETCD by downloading the ETCD binaries yourself, installing the binaries and configuring ETCD as a service in your master node yourself.
+kubectl exec etcd-master -n kube-system -- sh -c "ETCDCTL_API=3 etcdctl get / --prefix --keys-only --limit=10 --cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/server.crt --key /etc/kubernetes/pki/etcd/server.key"
+There are many options passed into the service. A number of them relate to certificates. We will learn more about these certificates in another section.
+The others are about configuring ETCD as a cluster. We will look at those options when we set up high availability in kubernetes.
+The only option to note for now is the advertised client url. This is the address on which ETCD listens. It happens to be on the IP of the server and on port 2379, which is the default port on which ETCD listens. This is the URL that should be configured on the kube-api server when it tries to reach the etcd server.
+If you setup your cluster using kubeadm, then it deploys the ETCD server for you as a POD in the kube-system namespace. You can explore the etcd database using the “etcdctl utility” within this pod. To list all keys stored by kubernetes, run:
+kubectl exec etcd-master -n kube-system etcdctl get / --prefix -keys-only
+Kubernetes stores data in the specific directory structure. The root directory is a registry and under that you have the various kubernetes constructs such as minions, nodes, pods, replicasets, deployments etc.
+ETCD in HA Environment
+In a high availability environment you will have multiple master nodes in your cluster, you will also have multiple ETCD instances spread across the master nodes.
+In that case, make sure the ETCD instances know about each other by setting the right parameter in the ETCD service configuration.
+The initial-cluster option is where you must specify the different instances of the ETCD service.
+--initial-cluster controller-0=https://${CONTROLLER0_IP}:2380,controller-1=https://${CONTROLLER1_IP}:2380 \\
+We will discuss high availability in much more detail later in this series but for now this overview should be enough.
+Useful ETCD Commands
+ETCDCTL is the CLI tool used to interact with ETCD.
+ETCDCTL can interact with ETCD Server using 2 API versions — Version 2 and Version 3. By default its set to use Version 2. Each version has different sets of commands.
+ETCDCTL V2 supports the following commands:
+etcdctl backup etcdctl cluster-health etcdctl mk etcdctl mkdir etcdctl set
+On the other hand, commands in V3 differ:
+etcdctl snapshot save etcdctl endpoint health etcdctl get etcdctl put
+To set the version of API set the environment variable ETCDCTL_API as such:
+export ETCDCTL_API=3
+Apart from that, you must also specify path to certificate files so that ETCDCTL can authenticate to the ETCD API Server. The certificate files are available in the etcd-master at the following path. We discuss more about certificates in the security section. So don’t worry if this looks complex:
+--cacert /etc/kubernetes/pki/etcd/ca.crt --cert /etc/kubernetes/pki/etcd/server.crt --key /etc/kubernetes/pki/etcd/server.key
