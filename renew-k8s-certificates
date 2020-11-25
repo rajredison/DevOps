@@ -1,11 +1,14 @@
 Step 1.
 $ cd /etc/kubernetes/pki/
 $ mv {apiserver.crt,apiserver-etcd-client.key,apiserver-kubelet-client.crt,front-proxy-ca.crt,front-proxy-client.crt,front-proxy-client.key,front-proxy-ca.key,apiserver-kubelet-client.key,apiserver.key,apiserver-etcd-client.crt} ~/
+$ mv /etc/kubernetes/pki/etcd/* /etcd-cert-bkp/
+$ source proxy
 $ kubeadm init phase certs all --apiserver-advertise-address
 $ cd /etc/kubernetes/
 $ mv {admin.conf,controller-manager.conf,kubelet.conf,scheduler.conf} ~/
 $ kubeadm init phase kubeconfig all
-$ reboot
+$ reboot or "systemctl restart kubelet;systemctl restart docker"
+
 $ cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
  
 Step2. Generate kubeadm join command on Master.
@@ -14,7 +17,7 @@ Step2. Generate kubeadm join command on Master.
 #kubeadm token create ckot93.8zkcbjl4b76tygrm --print-join-command
  
 Step 3. Re-join the node with master.
-#kubeadm join 191.168.3.9:6443 --token wc3wwz.b4l0f0whhrtpct0e --discovery-token-ca-cert-hash sha256:784081bbc234b64a9f1501016cbecd21adb28a2093939d6615234d5866a7321d --ignore-preflight-errors=all
+#kubeadm join x.x.x.x:6443 --token wc3wwz.b4l0f0whhrtpct0e --discovery-token-ca-cert-hash sha256:784081bbc234b64a9f1501016cbecd21adb28a2093939d6615234d5866a7321d --ignore-preflight-errors=all
  
 Step 4. Verfiy nodes are in ready stage.
 #kubectl get nodes
