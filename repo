@@ -1,2 +1,4 @@
 quay.io/rh-aiservices-bu/vllm-cpu-openai-ubi9:0.2
 quay.io/wxpe/tgis-vllm:release.74803b6
+
+https://www.redhat.com/en/blog/effortlessly-and-efficiently-provision-openshift-clusters-with-openshift-virtualization
