@@ -1,5 +1,7 @@
 https://apc01.safelinks.protection.outlook.com/ap/t-59584e83/?url=https%3A%2F%2Fteams.microsoft.com%2Fl%2Fmeetup-join%2F19%253ameeting_ZTVkMjY3ZWEtNGM0Ny00OGVlLTlkNmYtMGYyZTU5NzM4NzQ3%2540thread.v2%2F0%3Fcontext%3D%257b%2522Tid%2522%253a%2522189de737-c93a-4f5a-8b68-6f4ca9941912%2522%252c%2522Oid%2522%253a%2522fda0da8a-fdd5-4c40-9469-31ecf3966012%2522%257d&data=05%7C02%7Craj.kishore%40hcltech.com%7C95e7c22e73804cb4eb0308dccb515ac0%7C189de737c93a4f5a8b686f4ca9941912%7C0%7C0%7C638608797477675340%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=ZLiBjSh4%2Bn8MUQUCRk3%2FOmNyU5kqIOJdkdik9JVm%2B%2Bs%3D&reserved=0
 https://apc01.safelinks.protection.outlook.com/ap/t-59584e83/?url=https%3A%2F%2Fteams.microsoft.com%2Fl%2Fmeetup-join%2F19%253ameeting_ZTVkMjY3ZWEtNGM0Ny00OGVlLTlkNmYtMGYyZTU5NzM4NzQ3%2540thread.v2%2F0%3Fcontext%3D%257b%2522Tid%2522%253a%2522189de737-c93a-4f5a-8b68-6f4ca9941912%2522%252c%2522Oid%2522%253a%2522fda0da8a-fdd5-4c40-9469-31ecf3966012%2522%257d&data=05%7C02%7Craj.kishore%40hcltech.com%7C95e7c22e73804cb4eb0308dccb515ac0%7C189de737c93a4f5a8b686f4ca9941912%7C0%7C0%7C638608797477675340%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C0%7C%7C%7C&sdata=ZLiBjSh4%2Bn8MUQUCRk3%2FOmNyU5kqIOJdkdik9JVm%2B%2Bs%3D&reserved=0
+./setup-env.sh
+./setup-env.sh: line 44: return: can only `return' from a function or sourced script
 +++++ '[' -n '' ']'
 ++++ '[' -n '' ']'
 ++++ _sp_flags=
