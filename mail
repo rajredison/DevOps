@@ -19,3 +19,10 @@ https://apc01.safelinks.protection.outlook.com/ap/t-59584e83/?url=https%3A%2F%2F
  spack reindex
 ==> Error: Timed out waiting for a write lock after 60.318s.
     Made 161 attempts on file: /software/spack.0.22.1/opt/spack/.spack-db/lock
+
+-----------------------------
+ lsof /software/spack.0.22.1/opt/spack/.spack-db/lock
+lsof: WARNING: can't stat() fuse.gvfsd-fuse file system /run/user/278598402/gvfs
+      Output information may be incomplete.
+lsof: WARNING: can't stat() fuse.portal file system /run/user/278598402/doc
+      Output information may be incomplete.
