@@ -1,0 +1,12 @@
+groups:
+- name: filesystem_alerts
+  rules:
+  - alert: FilesystemUsageCritical
+    expr: node_filesystem_used[1m] / node_filesystem_size[1m] > 0.9
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: Filesystem usage is critically high.
+      description: Filesystem usage for {{ node }} is {{ node_filesystem_used[1m] / node_filesystem_size[1m] * 100 }}%. Please investigate.
+
