@@ -49,3 +49,18 @@ Jupyterlab and extra kernels & widgets built and installed.   However, They do n
 Adding jupyter kernels & widgets using spack
 Jupyterlab and extra kernels & widgets built and installed.   However, They do not work properly because they did not register properly with jupyter.   I was unable to get them to register properly with a spack build (even when I preloaded jupyterlab into the build environment.).  I'd appreciate it if this question was posted to slack to learn what is the proper way to add extra kernels and nglview (and it's widget) using spack.  (spack has packages for all 3 that I built and want to install globally for our users: bash, R, nglview)
  
+---------------------------
+I just tried maeparser first, since it was the dependency throwing the error.   Building with -fPIC fails because maeparser does lazy loading.
+ 
+spack install -j16 --use-buildcache auto --fresh  maeparser  %gcc@8.5.0 ^boost@1.70.0  cppflags=-fPIC target=x86_64_v3 os=rhel8
+arget=x86_64_v3 os=rhel8
+1113 errors found in build log:
+  >> 90      BufferTest.cpp:(.text+0x21): undefined reference to `boost::unit_t
+             est::lazy_ostream::inst'
+>> 91      BufferTest.cpp:(.text+0xb3): undefined reference to `boost::test_t
+             ools::tt_detail::report_assertion(boost::test_tools::assertion_res
+             ult const&, boost::unit_test::lazy_ostream const&, boost::unit_tes
+             t::basic_cstring<char const>, unsigned long, boost::test_tools::tt
+             _detail::tool_level, boost::test_tools::tt_detail::check_type, uns
+             igned long, ...)'
+
