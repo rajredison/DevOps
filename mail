@@ -18,3 +18,19 @@ isolating the maeparser build and using the same boost build as in rdkit generat
 spack install -j16 --use-buildcache auto --fresh  maeparser  %gcc@8.5.0 ^/j67hmtv  target=x86_64_v3 os=rhel8
 The output from the build is in this file
 /home/spack/workspace/spack-build/maeparser-build-out.txt
+
+----------------------------------------
+
+I tried installing static but the boost library in rdkit is shared so that wouldn't be helpful even if it did build (ie, it couldn't be used to install rdkit)
+ 
+WRT gromacs it does not load properly and the spider file error is back.   Looking at the spider error:
+          lpathA = {
+             = 1,
+            ["/software/spack.0.22.1/opt/spack/linux-rhel8-x86_64_v3/gcc-8.5.0/intel-oneapi-mkl-2024.0.0-p7p6wth/mkl/2024.0/lib"] = 1,
+          },
+(i added the underscores to highlight what is most likely a missing path.). Not sure how to get this fixed.   Refreshing lmod didn't resolve this.
+mkl is used in a lot of packages so I'm hesitant to remove and recreate it.   It would be good to post this on slack and see what suggestions we might get for correcting this (short of delete and recreate).
+ ========================
+Adding jupyter kernels & widgets using spack
+Jupyterlab and extra kernels & widgets built and installed.   However, They do not work properly because they did not register properly with jupyter.   I was unable to get them to register properly with a spack build (even when I preloaded jupyterlab into the build environment.).  I'd appreciate it if this question was posted to slack to learn what is the proper way to add extra kernels and nglview (and it's widget) using spack.  (spack has packages for all 3 that I built and want to install globally for our users: bash, R, nglview)
+ 
