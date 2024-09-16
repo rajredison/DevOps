@@ -33,4 +33,8 @@ mkl is used in a lot of packages so I'm hesitant to remove and recreate it.   It
  ========================
 Adding jupyter kernels & widgets using spack
 Jupyterlab and extra kernels & widgets built and installed.   However, They do not work properly because they did not register properly with jupyter.   I was unable to get them to register properly with a spack build (even when I preloaded jupyterlab into the build environment.).  I'd appreciate it if this question was posted to slack to learn what is the proper way to add extra kernels and nglview (and it's widget) using spack.  (spack has packages for all 3 that I built and want to install globally for our users: bash, R, nglview)
+================
+ ========================
+Adding jupyter kernels & widgets using spack
+Jupyterlab and extra kernels & widgets built and installed.   However, They do not work properly because they did not register properly with jupyter.   I was unable to get them to register properly with a spack build (even when I preloaded jupyterlab into the build environment.).  I'd appreciate it if this question was posted to slack to learn what is the proper way to add extra kernels and nglview (and it's widget) using spack.  (spack has packages for all 3 that I built and want to install globally for our users: bash, R, nglview)
  
