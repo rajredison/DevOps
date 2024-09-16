@@ -19,6 +19,17 @@ spack install -j16 --use-buildcache auto --fresh  maeparser  %gcc@8.5.0 ^/j67hmt
 The output from the build is in this file
 /home/spack/workspace/spack-build/maeparser-build-out.txt
 
+---------------------------------------------------------------
+1113 errors found in build log:
+  >> 90      BufferTest.cpp:(.text+0x21): undefined reference to `boost::unit_t
+             est::lazy_ostream::inst'
+>> 91      BufferTest.cpp:(.text+0xb3): undefined reference to `boost::test_t
+             ools::tt_detail::report_assertion(boost::test_tools::assertion_res
+             ult const&, boost::unit_test::lazy_ostream const&, boost::unit_tes
+             t::basic_cstring<char const>, unsigned long, boost::test_tools::tt
+             _detail::tool_level, boost::test_tools::tt_detail::check_type, uns
+             igned long, ...)'
+
 ----------------------------------------
 
 I tried installing static but the boost library in rdkit is shared so that wouldn't be helpful even if it did build (ie, it couldn't be used to install rdkit)
