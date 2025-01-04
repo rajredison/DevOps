@@ -1,0 +1,234 @@
+=====================================================
+https://access.redhat.com/solutions/6459071 ---Operator issue
+==================================================================
+We have this solution on "Removing extra control plane nodes from an OpenShift 4 cluster" at 
+https://access.redhat.com/solutions/6976637
+============================================================================
+
+===========================================================================
+Quary container register in HA----------------
+ODF---------------------------------------
+HCP ------requirement/build requirement
+----------------------------------------------------
+https://docs.openshift.com/container-platform/4.17/hosted_control_planes/hcp-disconnected/hcp-deploy-dc-bm.html#hcp-agentserviceconfig_hcp-deploy-dc-bm
+
+===============================================================
+https://docs.openshift.com/container-platform/4.17/hosted_control_planes/hcp-disconnected/hcp-deploy-dc-bm.html#hcp-dc-tls-bm
+========================================================
+https://access.redhat.com/solutions/7014209
+==================================================
+
+https://github.com/raffaelespazzoli/virtualization-migration-factory-reference-implementation
+https://docs.openshift.com/container-platform/4.17/installing/installing_bare_metal_ipi/ipi-install-installation-workflow.html#bmc-addressing-for-cisco-cimc_ipi-install-installation-workflow
+========================================
+https://docs.openshift.com/container-platform/4.17/virt/vm_networking/virt-connecting-vm-to-ovn-secondary-network.html#virt-creating-localnet-nad-cli_virt-connecting-vm-to-ovn-secondary-network
+
+VM network
+
+=====================================================================
+https://docs.openshift.com/container-platform/4.17/installing/install_config/configuring-firewall.html
+
+Firewall Configuration
+=============================================================================================================
+https://docs.openshift.com/container-platform/4.17/installing/install_config/configuring-firewall.html
+
+=========================================================================================================
+
+=================================================
+
+Access VM from outside network
+
+https://www.redhat.com/en/blog/access-external-networks-with-openshift-virtualization
+
+https://github.com/raffaelespazzoli/virtualization-migration-factory-reference-implementation/blob/main/clusters/etl6/overlays/nmstate-configuration/nncp.yaml
+
+================================
+https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.12/html/clusters/cluster_mce_overview#enable-cim-disconnected
+====================================================
+Strach cluster/standone cluster
+==================================
+Operator installation or upgrade fails with DeadlineExceeded in RHOCP https://access.redhat.com/solutions/6459071
+
+oc get events --sort-by='.lastTimestamp'
+
+https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.12/html/install/installing#additional-requirements
+====================================================
+ACM
+https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.12/html/install/installing#uninstalling
+=====================================================
+ETCD
+1 Extract a must-gather
+
+2 Change the hardware profile from "Default" to "Slower" Changing hardware speed tolerance
+
+3 Check etcd status (using manual defrag process)
+
+4 Extract a second must-gather
+ 
+Note: If available anytime for this cluster move etcd to a different disk
+ 
+
+https://docs.openshift.com/container-platform/4.17/scalability_and_performance/recommended-performance-scale-practices/recommended-etcd-practices.html#manual-defrag-etcd-data_recommended-etcd-practices
+
+
+https://docs.openshift.com/container-platform/4.17/scalability_and_performance/recommended-performance-scale-practices/recommended-etcd-practices.html#etcd-changing-hardware-speed-tolerance_recommended-etcd-practices
+
+
+https://docs.openshift.com/container-platform/4.17/scalability_and_performance/recommended-performance-scale-practices/recommended-etcd-practices.html#recommended-etcd-practices_recommended-etcd-practices
+
+============================================================================================================
+
+If your cluster is installed in a restricted network environment, disable the enableCommonBootImageImport feature gate in order to opt out of automatic updates:
+ 
+https://github.com/openshift/runbooks/blob/master/alerts/openshift-virtualization-operator/CDIDataImportCronOutdated.md
+ 
+=================================================================================
+
+ETCD performance troubleshooting guide for OpenShift Container Platform
+https://access.redhat.com/articles/6271341
+=========================================================
+==================================================================
+https://docs.openshift.com/container-platform/4.17/scalability_and_performance/recommended-performance-scale-practices/recommended-etcd-practices.html
+======================================================================
+https://dell.github.io/csm-docs/v1/deployment/offline/drivers/
+=================================================================
+https://docs.redhat.com/en/documentation/red_hat_advanced_cluster_management_for_kubernetes/2.12/html/install/installing#disconnect-config-olm
+===========================================================================
+https://dell.github.io/csm-docs/v1/deployment/csmoperator/#building-an-offline-bundle
+=======================================================================================
+sh-5.1# podman run --privileged --volume /var/lib/etcd:/test fihel02lph01.nsn-hclsmd.com:8443/library/repository:latest fio
+Trying to pull fihel02lph01.nsn-hclsmd.com:8443/library/repository:latest...
+Getting image source signatures
+Copying blob fa1c48334911 done   |
+Copying blob 1842e4e4b562 done   |
+Copying config f81449ef5c done   |
+Writing manifest to image destination
+-------------------------------------------------------
+FIO SUITE version 0.2.0
+-------------------------------------------------------
+ 
+WARNING: this test can run for several minutes without any progress! Please wait until it finish!
+START: 2024-12-26_14-42-40
+All output can be found in  //FIO-SUMMARY_2024-12-26_14-42-40
+-------------------------------------------------------
+ 
+ 
+- [ SEQUENTIAL IOPS TEST ]-------------------------------------------------------
+ 
+  [ ETCD-like FSYNC WRITE with fsync engine]
+ 
+  the 99.0th and 99.9th percentile of this metric should be less than 10ms (10k)
+ 
+cleanfsynctest: (g=0): rw=write, bs=(R) 8000B-8000B, (W) 8000B-8000B, (T) 8000B-8000B, ioengine=sync, iodepth=1
+fio-3.30
+Starting 1 process
+cleanfsynctest: Laying out IO file (1 file / 22MiB)
+ 
+cleanfsynctest: (groupid=0, jobs=1): err= 0: pid=57: Thu Dec 26 14:44:09 2024
+  write: IOPS=32, BW=254KiB/s (260kB/s)(22.0MiB/88839msec); 0 zone resets
+    clat (usec): min=5, max=217, avg=22.14, stdev= 9.42
+     lat (usec): min=6, max=218, avg=22.64, stdev= 9.55
+    clat percentiles (usec):
+     |  1.00th=[    8],  5.00th=[    9], 10.00th=[   11], 20.00th=[   15],
+     | 30.00th=[   20], 40.00th=[   21], 50.00th=[   22], 60.00th=[   24],
+     | 70.00th=[   26], 80.00th=[   29], 90.00th=[   32], 95.00th=[   36],
+     | 99.00th=[   45], 99.50th=[   56], 99.90th=[   86], 99.95th=[   92],
+     | 99.99th=[  219]
+   bw (  KiB/s): min=   15, max=  390, per=100.00%, avg=268.34, stdev=54.96, samples=167
+   iops        : min=    2, max=   50, avg=34.41, stdev= 7.04, samples=167
+  lat (usec)   : 10=9.82%, 20=27.37%, 50=62.19%, 100=0.59%, 250=0.03%
+  fsync/fdatasync/sync_file_range:
+    sync (usec): min=192, max=2840.1k, avg=30788.09, stdev=72187.29
+    sync percentiles (msec):
+     |  1.00th=[    9],  5.00th=[   15], 10.00th=[   17], 20.00th=[   21],
+     | 30.00th=[   23], 40.00th=[   23], 50.00th=[   23], 60.00th=[   27],
+     | 70.00th=[   30], 80.00th=[   36], 90.00th=[   46], 95.00th=[   54],
+     | 99.00th=[   78], 99.50th=[   96], 99.90th=[ 1028], 99.95th=[ 2165],
+     | 99.99th=[ 2836]
+  cpu          : usr=0.03%, sys=0.17%, ctx=14036, majf=0, minf=11
+  IO depths    : 1=200.0%, 2=0.0%, 4=0.0%, 8=0.0%, 16=0.0%, 32=0.0%, >=64=0.0%
+     submit    : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     complete  : 0=0.0%, 4=100.0%, 8=0.0%, 16=0.0%, 32=0.0%, 64=0.0%, >=64=0.0%
+     issued rwts: total=0,2883,0,0 short=2883,0,0,0 dropped=0,0,0,0
+     latency   : target=0, window=0, percentile=100.00%, depth=1
+ 
+Run status group 0 (all jobs):
+  WRITE: bw=254KiB/s (260kB/s), 254KiB/s-254KiB/s (260kB/s-260kB/s), io=22.0MiB (23.1MB), run=88839-88839msec
+ 
+ 
+  IMPORTANT fsync percentiles:        | 99.00th=[   78], 99.50th=[   96], 99.90th=[ 1028], 99.95th=[ 2165],
+-------------------------------------------------------
+SEQUENTIAL IOPS: 32
+  BAD.. IOPS is too low to run stable cluster.  32
+  OK.. 99.0th fsync is less than 10ms (10k).
+/usr/local/bin/fio_suite.sh: line 72: ((: > 10000 : syntax error: operand expected (error token is "> 10000 ")
+/usr/local/bin/fio_suite.sh: line 77: ((: > 10000 : syntax error: operand expected (error token is "> 10000 ")
+  OK.. 99.9th fsync is less than 10ms (10k).
+-------------------------------------------------------
+/usr/local/bin/fio_suite.sh: line 82: ((: > 8500 &&  < 10000: syntax error: operand expected (error token is "> 8500 &&  < 10000")
+ 
+  [ libaio engine SINGLE JOB, 70% read, 30% write]
+ 
+  This test is only for reference IOPS as it doesn't fully represent sequential IOPS of fsync.
+1GB file transfer:
+  read: IOPS=1265, BW=5063KiB/s (5184kB/s)(593MiB/120016msec)
+  write: IOPS=542, BW=2169KiB/s (2221kB/s)(254MiB/120016msec); 0 zone resets
+ 
+SEQUENTIAL WRITE IOPS: 542
+SEQUENTIAL READ IOPS: 1265
+--------------------------
+ 
+200MB file transfer:
+  read: IOPS=1736, BW=6948KiB/s (7114kB/s)(64.0MiB/9429msec)
+  write: IOPS=747, BW=2990KiB/s (3062kB/s)(27.5MiB/9429msec); 0 zone resets
+ 
+SEQUENTIAL WRITE IOPS: 747
+SEQUENTIAL READ IOPS: 1736
+--------------------------
+ 
+-- [ libaio engine SINGLE JOB, 30% read, 70% write] --
+ 
+200MB file transfer:
+  read: IOPS=775, BW=3101KiB/s (3175kB/s)(38.1MiB/12572msec)
+  write: IOPS=1794, BW=7178KiB/s (7350kB/s)(88.1MiB/12572msec); 0 zone resets
+ 
+SEQUENTIAL WRITE IOPS: 1794
+SEQUENTIAL READ IOPS: 775
+--------------------------
+ 
+1GB file transfer:
+  read: IOPS=752, BW=3012KiB/s (3084kB/s)(275MiB/93394msec)
+  write: IOPS=1745, BW=6982KiB/s (7150kB/s)(637MiB/93394msec); 0 zone resets
+ 
+SEQUENTIAL WRITE IOPS: 1745
+SEQUENTIAL READ IOPS: 752
+--------------------------
+ 
+ 
+[ RANDOM IOPS TEST ]-------------------------------------------------------
+ 
+[ RANDOM IOPS TEST ] - REQUEST OVERHEAD AND SEEK TIMES] ---
+ 
+This job is a latency-sensitive workload that stresses per-request overhead and seek times. Random reads.
+ 
+ 
+1GB file transfer:
+  read: IOPS=445, BW=1783KiB/s (1826kB/s)(209MiB/120257msec)
+ 
+RANDOM IOPS: IOPS=445
+--------------------------
+ 
+200MB file transfer:
+  read: IOPS=504, BW=2020KiB/s (2068kB/s)(182MiB/92106msec)
+ 
+RANDOM IOPS: IOPS=504
+--------------------------
+ 
+- END -----------------------------------------
+========================================================
+
+Must gather
+To extract a must-gather from OCP cluster:
+ 
+oc adm must-gather \    --image-stream=openshift/must-gather \    --image=quay.io/pg.next/pg-must-gather \    `$(oc get ns | grep -q openshift-compliance) && echo "--image=quay.io/compliance-operator/must-gather"` \    `$(oc get ns | grep -q openshift-logging) && logging_mg=$(oc -n openshift-logging get deployment/cluster-logging-operator -o jsonpath='{.metadata.ownerReferences[0].name}');echo "--image=$(oc -n openshift-logging get csv/$logging_mg -o json | jq '.spec.relatedImages[] | select (.name | contains ("cluster-logging-operator")) | .image' | sed 's/\"//g')"` \    `$(oc get ns | grep -q openshift-storage) && odf_mg=$(oc -n openshift-storage get deployment.apps/ocs-operator -o jsonpath='{.metadata.ownerReferences[0].name}'); echo "--image=$(oc -n openshift-storage get csv/$odf_mg -o json | jq '.spec.relatedImages[] | select (.name | contains ("must-gather")) | .image' | sed 's/\"//g')"` \    `$(oc get ns | grep -q openshift-local-storage) && echo "--image=registry.redhat.io/openshift4/ose-local-storage-mustgather-rhel8"` \    `$(oc get subscriptions.operators.coreos.com -A | grep -q "servicemeshoperator") && echo "--image=registry.redhat.io/openshift-service-mesh/istio-must-gather-rhel8:$(oc -n openshift-operators get deployment.apps/istio-operator -o jsonpath='{.metadata.ownerReferences[0].name}' | awk -F "." '{print $2"."$3}' | cut -c2- )"` \    `$(oc get ns | grep -q openshift-sandboxed-containers-operator) && echo "--image=registry.redhat.io/openshift-sandboxed-containers/osc-must-gather-rhel8"` \    `$(oc get ns | grep -q openshift-cnv) && cnv_mg=$(oc -n openshift-cnv get deployment.apps/hco-operator -o jsonpath='{.metadata.ownerReferences[0].name}'); echo "--image=$(oc -n openshift-cnv get csv/$cnv_mg -o json | jq '.spec.relatedImages[] | select (.name | contains ("must-gather")) | .image' | sed 's/\"//g')"` \    | tee must-gather-console.log
+ 
