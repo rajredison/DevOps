@@ -1,0 +1,20 @@
+To ensure a smooth experience, please verify that you have:
+SSH access to the lab servers
+Access to the Management Plane URL and can successfully log in (ensure you select "Use Local Credentials" in the login page)
+Dedicated Lab Environment: Lab #21
+Management Plane Details:
+URL: https://lab-1739134505.platform9.horse
+Username: labuser@platform9.com
+Password: Pl@tform9!
+Bare Metal Server Details:
+Server 1: lab-21-a.ash.pcd.platform9.horse
+Server 2: lab-21-b.ash.pcd.platform9.horse
+Username: root
+Password: Pl@tform9!
+Example Command:
+ssh root@lab-21-a.ash.pcd.platform9.horse
+Additional Environment Details (needed for specific tasks later in the workshop):
+NFS Mount Path: z60-os-jumphost.ash.pcd.platform9.horse:/nfs-exports/lab-21-mount
+VM Networking:
+Physical Network Subnet: 172.16.121.0/24
+Physical Network Gateway: 172.16.121.1
