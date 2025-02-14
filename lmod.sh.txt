@@ -1,0 +1,53 @@
+#!/bin/bash --norc
+
+ 
+
+SPACK_ROOT="/software/spack"
+
+BINDIR="${SPACK_ROOT}/opt/spack/linux-rhel8-x86_64_v3/gcc-8.5.0"
+
+ 
+
+# Check and see if lmod is in the environment
+
+# LMOD_VERSION
+
+ 
+
+_lmod=`echo $LMOD_VERSION`
+
+#echo ${_lmod}
+
+ 
+
+if [ -z "${_lmod}" ]
+
+then
+
+        echo "... configuring your environment to use modules (lmod)"
+
+        export TMP="/scratch"
+
+        #. $SPACK_ROOT/share/spack/setup-env.sh
+
+        . ${BINDIR}/lmod-8.7.24-yvrdfit/lmod/lmod/init/bash
+
+        export MODULEPATH="/software/spack/share/spack/modules/linux-rhel8-x86_64_v3/"
+
+ 
+
+# see if there are any sbgrid applications available
+
+ 
+
+        _sbgrid="/programs/share/modulefiles/x86_64-linux/sbgrid/"
+
+        if [ -d ${_sbgrid} ]; then
+
+                export MODULEPATH=${MODULEPATH=$}${_sbgrid}:
+
+        fi
+
+ 
+
+fi
