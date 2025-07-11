@@ -1,0 +1,40 @@
+apiVersion: rabbitmq.com/v1beta1
+kind: RabbitmqCluster
+metadata:
+  name: my-rabbitmq-cluster
+  namespace: default # Or your desired namespace
+spec:
+  replicas: 3 # Odd number is highly recommended for quorum queues
+  image: "rabbitmq:3.13.2-management" # Use a specific, stable version with management plugin
+  persistence:
+    storageClassName: "longhorn" # Or "local-path" if using K3s default
+    storage: 2Gi # Adjust as needed
+  rabbitmq:
+    additionalPlugins:
+      - rabbitmq_management
+      - rabbitmq_peer_discovery_k8s
+      - rabbitmq_prometheus
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        - labelSelector:
+            matchExpressions:
+              - key: app.kubernetes.io/name
+                operator: In
+                values:
+                  - my-rabbitmq-cluster
+          topologyKey: "kubernetes.io/hostname" # Ensures pods are spread across different nodes
+  service:
+    type: LoadBalancer # Or ClusterIP if you manage ingress externally
+    # If using LoadBalancer, ensure your K3s setup has a LoadBalancer controller (e.g., Klipper-lb, MetalLB)
+  resources:
+    requests:
+      cpu: "250m"
+      memory: "512Mi"
+    limits:
+      cpu: "1"
+      memory: "1Gi"
+  # Optionally, define default user and password (for development/testing only)
+  # For production, consider using a secret management solution
+  # defaultUser: "guest"
+  # defaultPass: "guest"
