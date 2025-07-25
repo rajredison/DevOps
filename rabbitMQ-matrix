@@ -1,0 +1,38 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: rabbitmq-monitor
+  labels:
+    release: prometheus-stack # This label should match your Prometheus Operator's serviceMonitorSelector
+spec:
+  selector:
+    matchLabels:
+      app: rabbitmq # This label must match the label on your rabbitmq-metrics Service
+  namespaceSelector:
+    matchNames:
+      - default # Or the namespace where your RabbitMQ Service resides
+  endpoints:
+    - port: prometheus-metrics # This should match the name of the port in your RabbitMQ Service (e.g., `prometheus-metrics`)
+      path: /metrics
+      interval: 30s # How often Prometheus should scrape (adjust as needed)
+
+
+
+
+------------------------------------------------------------------------
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-metrics
+  labels:
+    app: rabbitmq # Match your RabbitMQ pod labels
+spec:
+  ports:
+    - name: prometheus-metrics
+      port: 15692
+      targetPort: 15692
+      protocol: TCP
+  selector:
+    app: rabbitmq # Match your RabbitMQ pod labels
+
+kubectl apply -f rabbitmq-metrics-service.yaml
