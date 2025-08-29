@@ -1,0 +1,29 @@
+    # loki-values.yaml
+    loki:
+      # Configure Loki storage (e.g., filesystem for simple setups, or S3-compatible storage like MinIO for production)
+      persistence:
+        enabled: true
+        size: 10Gi # Adjust size as needed
+        storageClassName: local-path # Or your preferred storage class in K3s
+
+    promtail:
+      enabled: true
+      # Configure Promtail to scrape logs from K3s nodes
+      extraVolumes:
+        - name: varlog
+          hostPath:
+            path: /var/log
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+      extraVolumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+
+    grafana:
+      enabled: true
+      adminPassword: your-secure-password # Change this!
+      service:
+        type: ClusterIP # Or NodePort/LoadBalancer if you need external access
