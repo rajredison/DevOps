@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding="UTF-8"?>
+<TKNBatch>
+    <TKNHeader>
+        <Version>0</Version>
+        <Origin>N/A</Origin>
+        <Dest>N/A</Dest>
+        <Name>N/A</Name>
+        <FirstToken>N/A</FirstToken>
+        <LastToken>N/A</LastToken>
+        <NumTokens>0</NumTokens>
+        <Secret>yKjeWKJcg8zfjk6hnCnvVg==</Secret>
+        <DefBirth>2021/02/16</DefBirth>
+        <DefDeath>2035/12/31</DefDeath>
+        <DefDigits>8</DefDigits>
+        <DefInterval>60</DefInterval>
+        <DefAlg>1</DefAlg>
+        <DefMode>0</DefMode>
+        <DefPrecision>1200</DefPrecision>
+        <DefSmallWin>300</DefSmallWin>
+        <DefMediumWin>600</DefMediumWin>
+        <DefLargeWin>600</DefLargeWin>
+        <DefAddPIN>1</DefAddPIN>
+        <DefLocalPIN>0</DefLocalPIN>
+        <DefCopyProtection>1</DefCopyProtection>
+        <DefPinType>0</DefPinType>
+        <DefKeypad>1</DefKeypad>
+        <DefProtLevel>0</DefProtLevel>
+        <DefRevision>0</DefRevision>
+        <DefTimeDerivedSeeds>1</DefTimeDerivedSeeds>
+        <DefAppDerivedSeeds>0</DefAppDerivedSeeds>
+        <DefFormFactor>20000001</DefFormFactor>
+        <HeaderMAC>HKZzA+Xh5TrUli8Mkhu35w==</HeaderMAC>
+    </TKNHeader>
+    <TKN>
+        <SN>000524280822</SN>
+        <Seed>=R00ZeMi6SADUSd/1wKOzBg==</Seed>
+        <UserFirstName>HCL Technologies Belgium</UserFirstName>
+        <UserLastName>KISHORE Raj (SIM/MST)</UserLastName>
+        <UserLogin>id899825</UserLogin>
+        <PinType>0</PinType>
+        <TokenAttributes>
+           <DeviceType>PC Software Token V3.0 or later</DeviceType>
+           <DeviceTypeVersion>4.x</DeviceTypeVersion>
+           <DeviceTypeFamily>Desktop PC</DeviceTypeFamily>
+        </TokenAttributes>
+        <TokenMAC>0dtjSpypuc/MXHohy0QhJg==</TokenMAC>
+    </TKN>
+    <TKNTrailer>
+        <BatchSignature>K9TQogPiQzcah0QBoI60O/iFwfiqYLEN4Ntq8v0IQPYPS9DkYcVOYyl2mGGMDFQ8njVc9FXXAYlKjVgReUOncWsb6nKfnHrDoCRR2GTIcfDD11+mE9Ae02TqJarBPdHSgfTH9SrYjO2CBbCdYJ83eawHLDCqPCu8W/oVVFYInPg=</BatchSignature>
+        <BatchCertificate>MIICeTCCAWGgAwIBAgIQM0NFNTU4NTMzMDlGODEzMDANBgkqhkiG9w0BAQQFADBBMT8wPQYDVQQDEzZTZWN1cml0eSBEeW5hbWljcyBUZWNobm9sb2dpZXMsIEluYy4gUHJpbWFyeSBDQSBSb290IDEwHhcNMDIwNTE3MTkyMTU1WhcNMjIwNTEyMTkyMTU1WjA0MTIwMAYDVQQDEylTZWN1cml0eSBEeW5hbWljcyBUZWNobm9sb2dpZXMgQUNFL1NlcnZlcjCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA1np1DIf3HOHAK2ahcRzZCJsqIC1QMEqtsdanKSEn5CGtLCdLv9LbLUYo6cQxKSJtwvigpeDgBAb/UYcUNXy/7dY7rA5WpYlsaA9h5C9qzPMBHxVGSIe5k61uUbAwdFhCMfLh776wR//VZ7cuypo5d3cCbvgHGwqw4ZuECbKvONMCAwEAATANBgkqhkiG9w0BAQQFAAOCAQEAq8MMJs1SczwpfcZqn9loM+2RhFmN1IZiXyevz1VvGD9GUrlLalm/Et989zR/dVhciGXmAAxYnV/MoZmshjXozmJgjRmfqqHLS46UJ9nLZ2BuEVcrHnn6f9meIjeMWm+Dvh+8Vi9KJOLozYbDoaUMm+5F7ywKsUuBPRSJ1ykGJG6dOCBZlJGmM3kbZ54lRAK2TYcu2JM21i7BKdeE9xItyabJzEk3QCsX0erY7h3V//okIfKWLh8LieoWbV4+VtrQEoiUwyqdYswwgMOyRiKuGTkk3DhHdoqhG8SqHSxkPto42hEnpOx9j2rqcsOWosvNyfm9nwkqJfhuJClLwOzw5Q==</BatchCertificate>
+</TKNTrailer>
+</TKNBatch>
