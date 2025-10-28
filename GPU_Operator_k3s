@@ -1,0 +1,49 @@
+Step1. Install GPU drivers
+       https://docs.nvidia.com/datacenter/tesla/driver-installation-guide/ubuntu.html
+Step2. Install container-toolkit
+       https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html
+Step 3. Restart k3s.agent service
+        #systemctl status k3s-agent.service
+	  #systemctl list-unit-files --type=service|grep -i k3s
+         or
+        systemctl stop k3s.service
+        systemctl start k3s.service
+
+
+Step 4. Install/Uninstall GPU Operator
+
+     #helm uninstall -n gpu-operator $(helm list -n gpu-operator | grep gpu-operator | awk '{print $1}')
+     #helm install gpu-operator nvidia/gpu-operator --namespace gpu-operator --create-namespace --wait -f gpu-value.yaml
+
+     cat gpu-value.yaml
+     driver:
+  version: "570.133.20"
+toolkit:
+  env:
+    - name: CONTAINERD_CONFIG
+      value: "/etc/containerd/config.toml.tmpl"
+    - name: CONTAINERD_SOCKET
+      value: "/run/k3s/containerd/containerd.sock"
+    - name: CONTAINERD_RUNTIME_CLASS
+      value: "nvidia"
+    - name: CONTAINERD_SET_AS_DEFAULT
+      value: "true"
+
+
+Step 5. Specify Nvidia runtime in Deployment file
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nbody-gpu-benchmark
+  namespace: default
+spec:
+  restartPolicy: OnFailure
+  runtimeClassName: nvidia  ------NVIDIA runtime
+  containers:
+  - name: cuda-container
+    image: nvcr.io/nvidia/k8s/cuda-sample:nbody
+    args: ["nbody", "-gpu", "-benchmark"]
+    resources:
+      limits:
+        nvidia.com/gpu: 1
