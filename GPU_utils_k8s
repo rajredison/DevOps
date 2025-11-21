@@ -1,0 +1,198 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Per-Node: GPU Memory Utilization (%)",
+      "id": 1,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 },
+      "datasource": "${DS}",
+      "targets": [
+        {
+          "expr": "100 * (nvidia_gpu_memory_used_bytes{node=\"$node\"} / nvidia_gpu_memory_total_bytes{node=\"$node\"}) or 100 * ((dcgm_frame_buffer_total - dcgm_frame_buffer_free){node=\"$node\"} / dcgm_frame_buffer_total{node=\"$node\"}) or 100 * (nvidia_gpu_memory_used_bytes{instance=~\"$node\"} / nvidia_gpu_memory_total_bytes{instance=~\"$node\"}) or 100 * ((dcgm_frame_buffer_total - dcgm_frame_buffer_free){instance=~\"$node\"} / dcgm_frame_buffer_total{instance=~\"$node\"})",
+          "format": "time_series",
+          "interval": "",
+          "legendFormat": "{{instance}} / {{gpu}}",
+          "refId": "A"
+        }
+      ],
+      "options": { "legend": { "displayMode": "table", "placement": "bottom" } },
+      "repeat": "node",
+      "repeatDirection": "h",
+      "description": "Repeated panel per Kubernetes node. Uses node label if present; falls back to instance pattern that matches node name/IP."
+    },
+    {
+      "type": "timeseries",
+      "title": "Cluster GPU Memory Utilization (%) — all GPUs",
+      "id": 2,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "datasource": "${DS}",
+      "targets": [
+        {
+          "expr": "100 * (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes) or 100 * ((dcgm_frame_buffer_total - dcgm_frame_buffer_free) / dcgm_frame_buffer_total)",
+          "format": "time_series",
+          "legendFormat": "{{node}}/{{instance}}/{{gpu}}",
+          "refId": "A"
+        }
+      ],
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "description": "All GPUs across cluster"
+    },
+    {
+      "type": "heatmap",
+      "title": "Heatmap — GPU Memory Utilization (%) (cluster)",
+      "id": 3,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+      "datasource": "${DS}",
+      "targets": [
+        {
+          "expr": "100 * (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes) or 100 * ((dcgm_frame_buffer_total - dcgm_frame_buffer_free) / dcgm_frame_buffer_total)",
+          "format": "time_series",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "color": { "mode": "spectrum" },
+        "heatmap": { "mode": "density" }
+      },
+      "description": "Heatmap across time and GPUs to spot hot periods across nodes."
+    },
+    {
+      "type": "stat",
+      "title": "Cluster Avg GPU Memory Utilization (%)",
+      "id": 4,
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 24 },
+      "datasource": "${DS}",
+      "targets": [
+        {
+          "expr": "avg(100 * (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes) or 100 * ((dcgm_frame_buffer_total - dcgm_frame_buffer_free) / dcgm_frame_buffer_total))",
+          "format": "time_series",
+          "refId": "A"
+        }
+      ],
+      "options": { "reduceOptions": { "calcs": ["last"] } },
+      "description": "Average utilization across all GPUs (last value)."
+    },
+    {
+      "type": "table",
+      "title": "Top ${topN} GPUs by Memory Used",
+      "id": 5,
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 24 },
+      "datasource": "${DS}",
+      "targets": [
+        {
+          "expr": "topk(${topN}, nvidia_gpu_memory_used_bytes) or topk(${topN}, (dcgm_frame_buffer_total - dcgm_frame_buffer_free))",
+          "format": "table",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showHeader": true,
+        "sortBy": [{ "displayName": "Value", "desc": true }]
+      },
+      "description": "Top N GPUs by memory used (labels like node/instance/gpu shown if present)."
+    },
+    {
+      "type": "table",
+      "title": "Per-Node Total GPU Memory Used (MiB)",
+      "id": 6,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 34 },
+      "datasource": "${DS}",
+      "targets": [
+        {
+          "expr": "sum(nvidia_gpu_memory_used_bytes) by (node) / 1024 / 1024 or sum(dcgm_frame_buffer_total - dcgm_frame_buffer_free) by (node) / 1024 / 1024 or sum(nvidia_gpu_memory_used_bytes) by (instance) / 1024 / 1024",
+          "format": "table",
+          "refId": "A"
+        }
+      ],
+      "options": { "showHeader": true },
+      "description": "Total GPU memory used per Kubernetes node (MiB). If node label not present, instance-sum is used."
+    },
+    {
+      "type": "table",
+      "title": "Top Processes by GPU Memory (if available)",
+      "id": 7,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 42 },
+      "datasource": "${DS}",
+      "targets": [
+        {
+          "expr": "topk(${topN}, nvidia_gpu_process_memory_used_bytes) or topk(${topN}, dcgm_proc_memory_used_bytes) or topk(${topN}, nvidia_gpu_process_memory_used_bytes{node=\"$node\"})",
+          "format": "table",
+          "refId": "A"
+        }
+      ],
+      "options": { "showHeader": true },
+      "description": "Requires per-process metrics. Many dcgm-exporter builds do not expose process metrics by default."
+    },
+    {
+      "type": "timeseries",
+      "title": "Selected Node / GPU Memory Utilization (%)",
+      "id": 8,
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 50 },
+      "datasource": "${DS}",
+      "targets": [
+        {
+          "expr": "100 * (nvidia_gpu_memory_used_bytes{node=\"$node\", gpu=\"$gpu\"} / nvidia_gpu_memory_total_bytes{node=\"$node\", gpu=\"$gpu\"}) or 100 * ((dcgm_frame_buffer_total - dcgm_frame_buffer_free){node=\"$node\", gpu=\"$gpu\"} / dcgm_frame_buffer_total{node=\"$node\", gpu=\"$gpu\"}) or 100 * (nvidia_gpu_memory_used_bytes{instance=~\"$node\", gpu=\"$gpu\"} / nvidia_gpu_memory_total_bytes{instance=~\"$node\", gpu=\"$gpu\"})",
+          "format": "time_series",
+          "refId": "A"
+        }
+      ],
+      "options": { "legend": { "displayMode": "table", "placement": "bottom" } },
+      "description": "Choose node and GPU using the template variables at top."
+    }
+  ],
+  "refresh": "15s",
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": ["nvidia", "gpu", "dcgm", "memory", "kubernetes", "node"],
+  "templating": {
+    "list": [
+      {
+        "name": "DS",
+        "type": "datasource",
+        "query": "prometheus",
+        "label": "Prometheus DS",
+        "current": {}
+      },
+      {
+        "name": "node",
+        "type": "query",
+        "query": "label_values({__name__=~\"nvidia_gpu_memory_used_bytes|dcgm_frame_buffer_total|dcgm_frame_buffer_free\"}, node)",
+        "datasource": "${DS}",
+        "multi": false,
+        "includeAll": true,
+        "label": "Kubernetes node (preferred)",
+        "refresh": 2
+      },
+      {
+        "name": "gpu",
+        "type": "query",
+        "query": "label_values({__name__=~\"nvidia_gpu_memory_used_bytes|dcgm_frame_buffer_total|dcgm_frame_buffer_free\"}, gpu)",
+        "datasource": "${DS}",
+        "multi": false,
+        "includeAll": true,
+        "label": "GPU label (gpu / minor_number / uuid)",
+        "refresh": 2
+      },
+      {
+        "name": "topN",
+        "type": "constant",
+        "label": "Top N",
+        "hide": 0,
+        "current": { "text": "10", "value": "10" },
+        "query": "10"
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Kubernetes Node NVIDIA GPU Memory Utilization",
+  "uid": "k8s-node-nvidia-gpu-memory",
+  "version": 1
+}
