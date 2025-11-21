@@ -1,0 +1,34 @@
+{
+  "annotations": { "list": [] },
+  "panels": [
+    {
+      "type": "graph",
+      "title": "GPU Memory Utilization (%) - time series",
+      "id": 1,
+      "targets": [
+        {
+          "expr": "100 * (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes)",
+          "legendFormat": "{{gpu}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 }
+    },
+    {
+      "type": "gauge",
+      "title": "GPU Memory Utilization (Current)",
+      "id": 2,
+      "targets": [
+        {
+          "expr": "100 * (nvidia_gpu_memory_used_bytes{gpu=\"0\"} / nvidia_gpu_memory_total_bytes{gpu=\"0\"})",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 4, "w": 8, "x": 0, "y": 8 },
+      "options": { "min": 0, "max": 100 }
+    }
+  ],
+  "title": "NVIDIA GPU Memory Utilization - Minimal",
+  "schemaVersion": 27,
+  "version": 1
+}
