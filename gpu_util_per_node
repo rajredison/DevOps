@@ -1,0 +1,252 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "${DS}",
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "options": { "legend": { "displayMode": "list", "placement": "bottom" } },
+      "pluginVersion": "9.0.0",
+      "targets": [
+        {
+          "expr": "100 * (nvidia_gpu_memory_used_bytes{instance=\"$instance\"} / nvidia_gpu_memory_total_bytes{instance=\"$instance\"})",
+          "format": "time_series",
+          "interval": "",
+          "legendFormat": "{{gpu}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Per-Host: GPU Memory Utilization (%)",
+      "type": "timeseries",
+      "repeat": "instance",
+      "repeatDirection": "h",
+      "description": "This panel repeats for each host (instance). Replace metric names if your exporter uses different metric names or labels."
+    },
+    {
+      "datasource": "${DS}",
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 8 },
+      "id": 2,
+      "options": {
+        "showLegend": true,
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "expr": "100 * (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes)",
+          "legendFormat": "{{instance}} / {{gpu}}",
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "title": "Cluster GPU Memory Utilization (%) — all GPUs",
+      "type": "timeseries",
+      "description": "All GPUs across instances. Useful for spotting cluster-wide trends."
+    },
+    {
+      "datasource": "${DS}",
+      "fieldConfig": {
+        "defaults": { "unit": "percent" },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+      "id": 3,
+      "options": {
+        "color": { "mode": "palette-classic" },
+        "legend": { "show": true },
+        "dataFormat": "timeseries_to_columns",
+        "heatmap": { "mode": "density" }
+      },
+      "targets": [
+        {
+          "expr": "100 * (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes)",
+          "refId": "A",
+          "format": "time_series",
+          "instant": false
+        }
+      ],
+      "title": "Heatmap — GPU Memory Utilization (%)",
+      "type": "heatmap",
+      "description": "Heatmap across time and GPUs. Good for spotting hot periods."
+    },
+    {
+      "datasource": "${DS}",
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 24 },
+      "id": 4,
+      "options": { "reduceOptions": { "calcs": ["last"] }, "fieldOptions": { "defaults": { "unit": "percent" } } },
+      "targets": [
+        {
+          "expr": "avg(100 * (nvidia_gpu_memory_used_bytes / nvidia_gpu_memory_total_bytes))",
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "title": "Cluster Avg GPU Memory Utilization (%)",
+      "type": "stat",
+      "description": "Average utilization across all GPUs (last value)."
+    },
+    {
+      "datasource": "${DS}",
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 10, "w": 12, "x": 12, "y": 24 },
+      "id": 5,
+      "options": {
+        "showHeader": true,
+        "sortBy": [{ "displayName": "Used (MiB)", "desc": true }]
+      },
+      "targets": [
+        {
+          "expr": "topk(${topN}, nvidia_gpu_memory_used_bytes)",
+          "refId": "A",
+          "format": "table"
+        },
+        {
+          "expr": "nvidia_gpu_memory_total_bytes",
+          "refId": "B",
+          "format": "table"
+        }
+      ],
+      "title": "Top ${topN} GPUs by Memory Used (table)",
+      "type": "table",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "indexByName": { "__auto": 0 },
+            "renameByName": {}
+          }
+        },
+        {
+          "id": "merge",
+          "options": {}
+        }
+      ],
+      "description": "Shows top N GPUs by memory used. Columns: instance, gpu, used (MiB), total (MiB), utilization (%) — if metrics include those labels."
+    },
+    {
+      "datasource": "${DS}",
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 34 },
+      "id": 6,
+      "options": {},
+      "targets": [
+        {
+          "expr": "topk(10, nvidia_gpu_memory_used_bytes)",
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "title": "Top 10 GPUs (by used bytes) — short list",
+      "type": "table",
+      "description": "Quick short list for ops. Use the Top N panel above to configure size."
+    },
+    {
+      "datasource": "${DS}",
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 42 },
+      "id": 7,
+      "options": {},
+      "targets": [
+        {
+          "expr": "sum(nvidia_gpu_memory_used_bytes) by (instance) / 1024 / 1024",
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "title": "Per-Host Total GPU Memory Used (MiB)",
+      "type": "table",
+      "description": "Per-instance total GPU memory used (MiB). Useful for capacity by host."
+    },
+    {
+      "datasource": "${DS}",
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 50 },
+      "id": 8,
+      "options": {},
+      "targets": [
+        {
+          "expr": "100 * (nvidia_gpu_memory_used_bytes{instance=\"$instance\", gpu=\"$gpu\"} / nvidia_gpu_memory_total_bytes{instance=\"$instance\", gpu=\"$gpu\"})",
+          "refId": "A",
+          "format": "time_series"
+        }
+      ],
+      "title": "Selected GPU Memory Utilization (%)",
+      "type": "timeseries",
+      "description": "Choose a specific host and GPU using the template variables at top."
+    },
+    {
+      "datasource": "${DS}",
+      "fieldConfig": { "defaults": {}, "overrides": [] },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 58 },
+      "id": 9,
+      "options": { "showHeader": true },
+      "targets": [
+        {
+          "expr": "topk(${topN}, nvidia_gpu_process_memory_used_bytes)",
+          "refId": "A",
+          "format": "table"
+        }
+      ],
+      "title": "Top Processes by GPU Memory (if available)",
+      "type": "table",
+      "description": "Requires per-process metric (ex: nvidia_gpu_process_memory_used_bytes). If your exporter doesn't expose per-process metrics, this table will be empty — remove or replace with `nvidia_smi` based exporter metrics if available."
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": ["nvidia", "gpu", "dcgm", "memory"],
+  "templating": {
+    "list": [
+      {
+        "name": "DS",
+        "type": "datasource",
+        "query": "prometheus",
+        "hide": 0,
+        "label": "Prometheus DS",
+        "current": {}
+      },
+      {
+        "name": "instance",
+        "type": "query",
+        "query": "label_values(nvidia_gpu_memory_used_bytes, instance)",
+        "datasource": "${DS}",
+        "multi": false,
+        "includeAll": false,
+        "label": "Host (instance)",
+        "refresh": 2
+      },
+      {
+        "name": "gpu",
+        "type": "query",
+        "query": "label_values(nvidia_gpu_memory_used_bytes, gpu)",
+        "datasource": "${DS}",
+        "multi": false,
+        "includeAll": false,
+        "label": "GPU label",
+        "refresh": 2
+      },
+      {
+        "name": "topN",
+        "type": "constant",
+        "label": "Top N",
+        "hide": 0,
+        "current": { "text": "10", "value": "10" },
+        "query": "10"
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "NVIDIA GPU Memory Utilization - Full",
+  "uid": "nvidia-gpu-memory-full",
+  "version": 1
+}
