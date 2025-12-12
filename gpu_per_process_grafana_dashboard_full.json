@@ -1,0 +1,242 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "#000000",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "type": "row",
+      "title": "Per-host GPU overview",
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "collapsed": false,
+      "id": 1
+    },
+    {
+      "type": "timeseries",
+      "title": "GPU SM Utilization (per GPU) - $node",
+      "datasource": "${DS_PROMETHEUS}",
+      "targets": [
+        {
+          "expr": "avg by(gpu, instance) (dcgm_gpu_sm_utilization{instance=~\"$node\"})",
+          "legendFormat": "GPU {{gpu}}",
+          "refId": "A"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 1 },
+      "id": 2
+    },
+    {
+      "type": "timeseries",
+      "title": "GPU Memory Used (MB) - $node",
+      "datasource": "${DS_PROMETHEUS}",
+      "targets": [
+        {
+          "expr": "avg by(gpu, instance) (dcgm_gpu_memory_used_bytes{instance=~\"$node\"}) / 1024 / 1024",
+          "legendFormat": "GPU {{gpu}}",
+          "refId": "B"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 1 },
+      "id": 3
+    },
+    {
+      "type": "heatmap",
+      "title": "GPU SM Utilization Heatmap (cluster)",
+      "datasource": "${DS_PROMETHEUS}",
+      "targets": [
+        {
+          "expr": "dcgm_gpu_sm_utilization",
+          "refId": "C",
+          "format": "time_series"
+        }
+      ],
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 9 },
+      "id": 4
+    },
+    {
+      "type": "table",
+      "title": "Top N GPUs by Memory Used (MB)",
+      "datasource": "${DS_PROMETHEUS}",
+      "targets": [
+        {
+          "expr": "topk(10, dcgm_gpu_memory_used_bytes)",
+          "format": "time_series",
+          "instant": true,
+          "refId": "D"
+        }
+      ],
+      "options": {
+        "showHeader": true
+      },
+      "transform": "timeseries_aggregations",
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 17 },
+      "id": 5
+    },
+    {
+      "type": "table",
+      "title": "Top GPU Processes (by GPU memory)",
+      "datasource": "${DS_PROMETHEUS}",
+      "targets": [
+        {
+          "expr": "topk(20, dcgm_process_used_gpu_memory)",
+          "format": "time_series",
+          "instant": true,
+          "refId": "E"
+        }
+      ],
+      "options": {
+        "showHeader": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "megabytes"
+        }
+      },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 17 },
+      "id": 6
+    },
+    {
+      "type": "table",
+      "title": "Per-Process GPU Utilization (SM & Memory)",
+      "datasource": "${DS_PROMETHEUS}",
+      "targets": [
+        {
+          "expr": "dcgm_process_utilization_sm",
+          "legendFormat": "sm {{pid}} {{process_name}} (gpu {{gpu}})",
+          "refId": "F",
+          "instant": false
+        },
+        {
+          "expr": "dcgm_process_used_gpu_memory",
+          "legendFormat": "mem {{pid}} {{process_name}} (gpu {{gpu}})",
+          "refId": "G",
+          "instant": false
+        }
+      ],
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 23 },
+      "id": 7
+    },
+    {
+      "type": "timeseries",
+      "title": "Per-namespace GPU Memory Usage (sum MB)",
+      "datasource": "${DS_PROMETHEUS}",
+      "targets": [
+        {
+          "expr": "sum by (namespace) (dcgm_process_used_gpu_memory) / 1024 / 1024",
+          "legendFormat": "{{namespace}}",
+          "refId": "H"
+        }
+      ],
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 31 },
+      "id": 8
+    },
+    {
+      "type": "timeseries",
+      "title": "Top N Processes GPU SM Utilization (cluster)",
+      "datasource": "${DS_PROMETHEUS}",
+      "targets": [
+        {
+          "expr": "topk(10, dcgm_process_utilization_sm)",
+          "legendFormat": "{{process_name}} (pid {{pid}})",
+          "refId": "I"
+        }
+      ],
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 31 },
+      "id": 9
+    },
+    {
+      "type": "stat",
+      "title": "Total GPU Memory Used (GB)",
+      "datasource": "${DS_PROMETHEUS}",
+      "targets": [
+        {
+          "expr": "sum(dcgm_gpu_memory_used_bytes) / 1024 / 1024 / 1024",
+          "refId": "J",
+          "instant": true
+        }
+      ],
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
+      "id": 10
+    },
+    {
+      "type": "stat",
+      "title": "Total GPU SM Util Average (%)",
+      "datasource": "${DS_PROMETHEUS}",
+      "targets": [
+        {
+          "expr": "avg(dcgm_gpu_sm_utilization)",
+          "refId": "K",
+          "instant": true
+        }
+      ],
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 5 },
+      "id": 11
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 36,
+  "style": "dark",
+  "tags": ["gpu", "dcgm", "nvidia", "prometheus"],
+  "templating": {
+    "list": [
+      {
+        "type": "datasource",
+        "name": "DS_PROMETHEUS",
+        "query": "prometheus",
+        "refresh": 2
+      },
+      {
+        "name": "node",
+        "type": "query",
+        "label": "Node (instance)",
+        "datasource": "${DS_PROMETHEUS}",
+        "query": "label_values(dcgm_gpu_sm_utilization, instance)",
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "refresh": 2
+      },
+      {
+        "name": "gpu",
+        "type": "query",
+        "label": "GPU",
+        "datasource": "${DS_PROMETHEUS}",
+        "query": "label_values(dcgm_gpu_sm_utilization, gpu)",
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "refresh": 2
+      },
+      {
+        "name": "namespace",
+        "type": "query",
+        "label": "Kubernetes Namespace",
+        "datasource": "${DS_PROMETHEUS}",
+        "query": "label_values(kube_pod_info, namespace)",
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "refresh": 2
+      }
+    ]
+  },
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "GPU per-process and per-GPU - DCGM / Prometheus (Full)",
+  "version": 1
+}
